@@ -1,0 +1,70 @@
+所有的控制器都应该继承laravel自带的控制器基类；
+
+01 基本控制器：
+02 隐式控制器
+03 RESTful controller
+04 总结
+
+
+01---------------------------------------
+×基本控制器 
+
+//--app/Http/Controllers/BasicController.php
+namespace App\Http\Controllers;		//namespace
+use App\Http\Controllers\Controller;
+class BasicController extends Controller{
+	public function test(){
+		return "this is a method named test from a basic controller";
+	}
+}
+
+//--app/Http/routes.php
+!!!!!ATTENTION!!!!use the get or post but no "controller"
+一定注意不能用controller这个单词，在隐式声明上用controller这个单词。
+Route::get('basic','BasicController@test');
+
+
+
+
+02---------------------------------------
+×RESTful资源控制器
+在项目目录下运行 php artisan make:controller XxxController
+将会产生一个RESTful资源路由控制器。比如应用如下：
+
+php artisan make:controller PostController
+//--app/Http/routes.php
+//资源路由用resource这个单词
+Route::resource('post','PostController');
+
+
+
+
+
+03---------------------------------------
+×隐式控制器
+namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
+class ZzController extends Controller{
+	public function getTest(){
+		return "this is a method getTest of ZzController";
+	}
+}
+Route::controller('zz','ZzController');
+http://localhost/zz/test  --->隐式的访问方法。
+
+
+04---------------------------------------
+基本控制器在配置路由的时候要用get post any 一类的方法
+最后一个参数要用@指出要用的方法
+
+隐身控制器在配置路由的时候要用controller一个单词匹配一系列的方法
+第一个参数是这个控制器baseURl，第二个参数是控制器的名字。
+控制器的方法都要以http的方法(get、post、head)开头+具体方法名称
+
+
+
+
+基本控制器通过@要写一系列的方法进行配置。
+而隐式控制器只需要配置一条即可。
+
+
