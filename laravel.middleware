@@ -62,3 +62,23 @@ Route::group(['middleware'=>'test'],function(){
 	});
 
 });
+
+
+
+
+-----------------最后------------------------------
+
+Route::get('middle/',['middleware'=>'test',function(){
+
+	return "<br>how middleware work !<br>";
+}]);
+
+public function handle($request, Closure $next)
+{
+    echo $request->input('age')."<br>";
+    echo $request->input('gender')."<br>";
+    return $next($request);
+
+}
+
+http://localhost/middle?age=58&gender=female
