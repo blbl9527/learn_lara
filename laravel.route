@@ -1,0 +1,35 @@
+你好laravel
+
+1.提交表单时候要有_token
+$csrf_token = csrf_token();
+<input type="hidden" name="_token" value="{$csrf_token}">
+否则会报错：TokenMismatchException in VerifyCsrfToken.php line 53
+
+
+2.路由配置 app/Http/routes.php
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/hello',function(){
+    return "Hello Laravel[GET]!";
+});
+
+Route::match(['get','post'],'/hello',function(){
+   return "Hello Laravel!";
+});
+
+Route::any('/hello',function(){
+    return "Hello Laravel!";
+});
+
+Route::get('/hello/{name}',function($name){
+    return "Hello {$name}!";
+});
+
+Route::get('/hello/{name?}',function($name="Laravel"){
+    return "Hello {$name}!";
+})->where('name','[A-Za-z]+');
+
+可见,Route 门面有get,match,any,post,等方法,通过这些方法可以返回一个请求
