@@ -1,0 +1,64 @@
+01创建一个中间件 ：php artisan make:middleware TestMiddleware
+
+02中间件的作用：处理客户端发来的request，比如重定向一个request，拦截一个request等等。
+
+03中间件的分类：
+
+04中间件的编写：public function handle($request, Closure $next)编写他。
+
+05中间件的配置：/app/Http/Kernal.php文件中配置。
+
+06中间件的使用：
+
+
+>--------------05.具体来说----------------------
+
+在/app/Http/Kernal.php文件中可以发现两个数组，
+protected $middleware=[];   --->global HTTP middleware stack;
+protected $routeMiddleware = [];  --->route middleware.
+这两个数组第一个配置全局中间件，第二个配置路由的中间件。一般路由的中间件会有一个别名。
+比如01步骤新建的中间件配置为路由中间件的写法是添加：
+'test' => \App\Http\Middleware\TestMiddleware::class,
+之所以怎么写是仿照这写的。
+
+
+-------------------------------------------------<
+
+
+>------------------06具体来说-----------------------
+对单个路由来应用：
+Route::get('/welcome',['as'=>'hi','middleware'=>'test',function(){
+	return " <br>welcome<br> ";
+}]);
+当访问/welcome时候请求会被test即（TestMiddleware）所处理具体处理看04
+
+---------------------------------------------------<
+
+
+
+>-------------------04具体来说-------------------------
+public function handle($request, Closure $next)
+{
+    echo "USE TestMiddleware";
+    return $next($request);
+}
+至于处理写在 return前还是return后，还有。。。我还不太清楚，
+了解一些。
+-----------------------------------------------------<
+
+
+
+-----------last--------------------
+中间件一般用于一些路由条目的过滤，这些条目可以被包在一个组内，如下所示：
+
+Route::group(['middleware'=>'test'],function(){
+
+	Route::any('/hi',function(){
+		return "hi";
+	});
+
+	Route::any('/hello',function(){
+		return "hello";
+	});
+
+});
