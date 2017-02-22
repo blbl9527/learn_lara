@@ -1,0 +1,76 @@
+CSRF（Cross-site request forgery）跨站请求伪造，也被称为Session Riding，
+通常缩写为CSRF或者XSRF，是一种对网站的恶意利用。
+它与XSS(跨站脚本)非常不同，XSS利用站点内的信任用户。
+而CSRF则通过伪装来自受信任用户的请求来利用受信任的网站。
+与XSS攻击相比，CSRF攻击往往不大流行和难以防范，所以被认为比XSS更具危险性。
+
+进行csrf攻击的条件：
+1.登录受信任网站A，并在本地生成Cookie。
+2.在不登出A的情况下，访问危险网站B。
+3.所谓的不登出，指的的是cookie没有过期，而不是简单的关闭网页。
+
+
+CSRF攻击是源于WEB的隐式身份验证机制！WEB的身份验证机制虽然可以保证一个请求是来自于某个用户的浏览器，
+但却无法保证该请求是用户批准发送的！
+
+
+---------------------------laravel.csrf----------------------------------
+提供了全局帮助函数： csrf_token()、csrf_field();
+
+csrf_token(),用于产生token值，
+<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+
+
+csrf_field();用于构造上面的整个html语句：看一下他的源代码：
+function csrf_field()
+{
+    return new Expression('<input type="hidden" name="_token" value="'.csrf_token().'">');
+}
+---------------------------------------------------------------------------
+
+
+---------------------------how to use---------------------------------------
+Route::get('test',function(){
+	$csrf_field = csrf_field();
+	$html = <<<GET
+	<form action="/testxx" method="POST">
+		{$csrf_field}
+		<input type="submit" value="Test"/>
+	</form>
+GET;
+	return $html;
+});
+
+
+Route::post('/testxx',function(){
+	return "success..";
+});
+当用户获得一个表单时候必须要有csrf_token记录。如果用户获得的表单是友blade模板引擎提供的
+可以在对应位置写{!! csrf_field() !!},他会被引擎处理成html
+-------------------------------------------------------------------------------
+
+
+
+
+
+
+----------------------------post来自ajax----------------------------------------
+
+-------------------------------------------------------------------------------
+
+
+
+
+
+-------------------------------总有些例外---------------------------------------
+
+不是每一个请求都有被攻击的可能, 网站可以开放一些api的借口，这些借口可能通过post请求获取数据。
+可以配置这些借口不需要进过csrf验证。
+
+具体在中间件app/Http/Middleware/VerifyCsrfToken.php中进行配置。
+protected $except = [],在此数组中填写路由路径即可。
+
+比如 protected $except = ['/getsomething',];
+此时就可以用postman访问这个地址了。
+
+-------------------------------------------------------------------------------
