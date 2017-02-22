@@ -32,4 +32,20 @@ Route::get('/hello/{name?}',function($name="Laravel"){
     return "Hello {$name}!";
 })->where('name','[A-Za-z]+');
 
-可见,Route 门面有get,match,any,post,等方法,通过这些方法可以返回一个请求
+可见,Route 门面有get,match,any,post,等方法,通过这些方法可以返回一个请求，
+而返回的一般用闭包，闭包里面可以简单的返回一个字符串或者一个view。
+
+每一条路由还可以接上 ->where对路由路径进行regexp匹配。
+
+
+>--------------------------------------------------
+如果要对路由路径进行全局的regexp匹配，可以在RouteServiceProvider.php文件进配置。
+路径在app/Providers/RouteServiceProvider.php
+
+public function boot(Router $router)
+{
+    $router->pattern('name','[A-Za-z]+');
+    parent::boot($router);
+}
+
+--------------------------------------------------<
