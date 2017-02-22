@@ -71,3 +71,30 @@ Route::get('/namedRT',fucntion(){
 所谓的重定向就是说，连浏览器的地址栏内容也要发生改变。
 
 -------------------------------------------------<
+
+
+>-------------------------------------------------
+route()函数，第一个参数是被命名的路由的别名，第二个参数是
+一个是数组，该数组传值给被命名的路由.
+
+function redirect($to = null, $status = 302, $headers = [], $secure = null)
+{
+    if (is_null($to)) {
+        return app('redirect');
+    }
+
+    return app('redirect')->to($to, $status, $headers, $secure);
+}
+  
+function app($make = null, $parameters = [])
+{
+    if (is_null($make)) {
+        return Container::getInstance();
+    }
+
+    return Container::getInstance()->make($make, $parameters);
+}
+--LOOK-->  return redirect()->route('name',[]);
+--LOOK-->  Container::getInstance()->app('redirect');
+看着头大，反正，会用不就好了吗。。
+------------------------------------------------<
